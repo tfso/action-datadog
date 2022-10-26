@@ -1,4 +1,4 @@
-import core, { exportVariable } from '@actions/core'
+import { getInput, setOutput, exportVariable } from '@actions/core'
 import { context, getOctokit } from "@actions/github";
 import { Octokit } from "@octokit/core";
 
@@ -8,15 +8,15 @@ main()
     .catch(err => console.error(err))
 
 async function main(): Promise<void> {
-    const githubApiKey = core.getInput("github-token") || process.env.GITHUB_TOKEN
-    const repository = core.getInput('repository') || process.env.GITHUB_REPOSITORY
-    const path = core.getInput('path') || 'service.datadog.yaml'
+    const githubApiKey = getInput("github-token") || process.env.GITHUB_TOKEN
+    const repository = getInput('repository') || process.env.GITHUB_REPOSITORY
+    const path = getInput('path') || 'service.datadog.yaml'
 
     const octokit = getOctokit(githubApiKey)
     
     console.log(`looking up datadog service definition "${path}" at repository "${repository}"`)
 
-    const file = await getFile(octokit, repository, path)
+    const file = await getFile(octokit, repository, path, context.ref || undefined)
     const datadog = {
         service: '',
         team: '',
@@ -42,27 +42,28 @@ async function main(): Promise<void> {
         }
     }
 
-    core.setOutput('service', datadog.service)
-    core.setOutput('team', datadog.team)
-    core.setOutput('module', datadog.module)
+    setOutput('service', datadog.service)
+    setOutput('team', datadog.team)
+    setOutput('module', datadog.module)
 
     if(datadog.service) {
-        core.exportVariable('DD_SERVICE', datadog.service)
-        core.exportVariable('TFSO_DD_SERVICE', datadog.service)
+        exportVariable('DD_SERVICE', datadog.service)
+        exportVariable('TFSO_DD_SERVICE', datadog.service)
     }
     
     if(datadog.tags.length > 0) {            
-        core.exportVariable('DD_TAGS', datadog.tags.join(','))
-        core.exportVariable('TFSO_DD_TAGS', datadog.tags.join(','))
+        exportVariable('DD_TAGS', datadog.tags.join(','))
+        exportVariable('TFSO_DD_TAGS', datadog.tags.join(','))
     }
 }
 
-async function getFile(octokit: Octokit, repository: string, path: string) {
+async function getFile(octokit: Octokit, repository: string, path: string, ref?: string) {
     const [, owner, repo] = /([^\/]+)\/(.*)/gi.exec(repository)
     const response = await octokit.request('GET /repos/{owner}/{repo}/contents/{path}', { 
         owner,
         repo,
         path,
+        ref
     })
 
     if(response.status == 200) {
