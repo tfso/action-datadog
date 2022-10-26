@@ -14,14 +14,16 @@
     "dependencies": {
         "@actions/core": "^1.10.0",
         "@actions/exec": "^1.1.1",
-        "@actions/github": "^5.0.3",
-        "@octokit/core": "^4.0.5"
+        "@actions/github": "^5.1.1",
+        "@octokit/core": "^4.1.0",
+        "yamljs": "^0.3.0"
     },
     "devDependencies": {
         "@types/node": "^17.0.17",
+        "@types/yamljs": "^0.2.31",
         "esbuild": "0.14.11",
         "esbuild-node-loader": "^0.8.0",
         "eslint": "^8.7.0",
-        "typescript": "^4.5.5"
+        "typescript": "^4.8.4"
     }
 }
