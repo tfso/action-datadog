@@ -36,6 +36,9 @@ async function main(): Promise<void> {
             datadog.team = String(json['team'])
             datadog.module = String(tags['module'])
 
+            if(datadog.team)
+                tags['team'] = datadog.team
+
             datadog.tags = Object
                 .entries(tags)
                 .map(([key, value]) => `${key}:${value}`)
