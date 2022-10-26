@@ -3,12 +3,26 @@ description: ''
 inputs:
   github-token:
     description: The GitHub token used to create an authenticated client
-    default: ${{ github.token }}
+    default: ${{ github.token || env.GITHUB_TOKEN }}
+    required: false
+
+  repository: 
+    description: The owner and repository name. For example, Codertocat/Hello-World
+    default: ${{ github.repository || env.GITHUB_REPOSITORY }}
+    required: false
+
+  path: 
+    description: The location of the datadog service definition
+    default: service.datadog.yaml
     required: false
 
 outputs:
+  service:
+    description: Datadog service
   team: 
     description: Team name
+  module:
+    description: Tag named module
 
 runs:
   using: 'node16'
