@@ -1,0 +1,15 @@
+name: Datadog service lookup
+description: ''
+inputs:
+  github-token:
+    description: The GitHub token used to create an authenticated client
+    default: ${{ github.token }}
+    required: false
+
+outputs:
+  team: 
+    description: Team name
+
+runs:
+  using: 'node16'
+  main: 'dist/index.js'
