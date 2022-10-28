@@ -4,13 +4,37 @@ A action for [datadog service definition v2](https://github.com/DataDog/schema/b
 In addition to outputs, it will also set the following environment variables `DD_SERVICE`, `TFSO_DD_SERVICE`, `DD_TAGS`, `TFSO_DD_TAGS`.
 
 ```yaml
-    - uses: tfso/action-datadog@v1
-      id: datadog
+- uses: tfso/action-datadog@v1
+  id: datadog
 
-    - uses: tfso/action-deployment@v1
-      with:
-        team: ${{ steps.datadog.outputs.team }}
-        module: ${{ steps.datadog.outputs.module }}
-        dd-service: ${{ steps.datadog.outputs.service }}
-        ...
+- uses: tfso/action-deployment@v1
+  with:
+    team: ${{ steps.datadog.outputs.team }}
+    module: ${{ steps.datadog.outputs.module }}
+    dd-service: ${{ steps.datadog.outputs.service }}
+    ...
+```
+
+## Multipart yaml
+If the service definition is a multipart yaml separated with three dashes you may have use a service match to pick the correct service definition. Otherwise it will just return the first document in the yaml.
+
+If the multipart yaml is like this; 
+```yaml
+schema-version: v2
+dd-service: translation.api.24sevenoffice.com
+team: ops
+tags:
+  - module:administration
+---
+schema-version: v2
+dd-service: translation.worker.24sevenoffice.com
+team: ops
+tags:
+  - module:administration
+```
+and you want to pick the service definition for the worker you could use the input `service` with `tfso/action-datadog@v1` with a string match or regex: 
+```yaml
+- uses: tfso/action-datadog@v1
+  with:
+    service: /worker/i
 ```

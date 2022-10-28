@@ -1,4 +1,4 @@
-name: Datadog service lookup
+name: Datadog service definition lookup
 description: ''
 inputs:
   github-token:
@@ -14,6 +14,10 @@ inputs:
   path: 
     description: The location of the datadog service definition
     default: service.datadog.yaml
+    required: false
+
+  service: 
+    description: If the datadog service defintion is a multipart yaml (separated with three dashes) you could match the dd-service with equality or regex. If left out, it will return the first match
     required: false
 
 outputs:
