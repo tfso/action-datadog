@@ -16,9 +16,10 @@ In addition to outputs, it will also set the following environment variables `DD
 ```
 
 ## Multipart yaml
-If the service definition is a multipart yaml separated with three dashes you may have use a service match to pick the correct service definition. Otherwise it will just return the first document in the yaml.
+If the service definition is a multipart yaml separated with three dashes you may have to use a service match to pick the correct service definition. If service match is is left out it will return the first document in the yaml.
 
 If the multipart yaml is like this; 
+
 ```yaml
 schema-version: v2
 dd-service: translation.api.24sevenoffice.com
@@ -32,7 +33,9 @@ team: ops
 tags:
   - module:administration
 ```
+
 and you want to pick the service definition for the worker you could use the input `service` with `tfso/action-datadog@v1` using a string match or regex: 
+
 ```yaml
 - uses: tfso/action-datadog@v1
   with:
