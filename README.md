@@ -32,7 +32,7 @@ team: ops
 tags:
   - module:administration
 ```
-and you want to pick the service definition for the worker you could use the input `service` with `tfso/action-datadog@v1` with a string match or regex: 
+and you want to pick the service definition for the worker you could use the input `service` with `tfso/action-datadog@v1` using a string match or regex: 
 ```yaml
 - uses: tfso/action-datadog@v1
   with:
