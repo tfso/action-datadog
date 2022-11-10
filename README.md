@@ -3,6 +3,7 @@ A action for [datadog service definition v2](https://github.com/DataDog/schema/b
 
 In addition to outputs, it will also set the following environment variables `DD_SERVICE`, `TFSO_DD_SERVICE`, `DD_TAGS`, `TFSO_DD_TAGS`. Team will be added to the `DD_TAGS` and `TFSO_DD_TAGS` environment variables as well.
 
+## Usage
 Example of usage:
 
 ```yaml
@@ -16,6 +17,31 @@ Example of usage:
     dd-service: ${{ steps.datadog.outputs.service }}
     ...
 ```
+
+### inputs
+|name|required|default|description|
+|---|---|---|---|
+|github-token|false|current repo token|The GitHub token used to create an authenticated client
+|repository|false|current repo|The owner and repository name. For example, Codertocat/Hello-World
+|path|false|service.datadog.yaml|The location of the datadog service definition
+|service|false||If the datadog service defintion is a multipart yaml (separated with three dashes) you could match the dd-service with equality or regex. If left out, it will return the first match|
+
+### outputs
+|name|description|
+|---|---|
+|service|Datadog service name, mainly used for DD_SERVICE
+|team|Team name
+|module|Value for the tag named module, eg returning `administration` if tag `module:administration` exists
+
+### environments
+After running this actions the following ENV variables will be set for the current job.
+
+|env|description
+|---|---|
+|DD_SERVICE|Datadog service name
+|DD_TAGS|All tags defined in datadog service definition
+|TFSO_DD_SERVICE|Same as DD_SERVICE
+|TFSO_DD_TAGS|Same as DD_TAGS
 
 ## Multipart yaml
 If the service definition is a multipart yaml separated with three dashes you may have to use a service match to pick the correct service definition. If service match is is left out it will return the first document in the yaml.
