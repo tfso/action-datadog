@@ -10,6 +10,7 @@ main()
 async function main(): Promise<void> {
     const githubApiKey = getInput("github-token") || process.env.GITHUB_TOKEN
     const repository = getInput('repository') || process.env.GITHUB_REPOSITORY
+    const service = getInput('service') || undefined
     const path = getInput('path') || 'service.datadog.yaml'
 
     const octokit = getOctokit(githubApiKey)
@@ -25,7 +26,7 @@ async function main(): Promise<void> {
     }
 
     if(file) {
-        const json = yaml.parse(file)
+        const json = getJson(file, service)
         if(json) {
             const tags = Object.fromEntries(Array
                 .from(json['tags'] ?? [])
@@ -76,4 +77,24 @@ async function getFile(octokit: Octokit, repository: string, path: string, ref?:
     }
 
     return null
+}
+
+function getJson(multipartYaml: string, service?: string): Record<string, any> {
+    for(const part of multipartYaml.split(/---\n/g)) {
+        const json = yaml.parse(part)
+
+        if(!json || typeof json != 'object' || ('dd-service' in json) == false)
+            continue
+
+        if(typeof service !== 'string' || json['dd-service'] == service || getRegExp(service).test(json['dd-service']))
+            return json
+    }
+
+    return null
+}
+
+function getRegExp(regex: string): RegExp {
+    const [,, pattern, modifiers, otherPattern] = /^(\/(.*?)\/(\w+)?$)|(.*)$/.exec(regex) ?? []
+
+    return new RegExp(pattern ?? otherPattern, modifiers ?? 'g')
 }
